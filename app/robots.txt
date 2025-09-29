@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# 로그인/회원가입 페이지는 크롤링 제외
+Disallow: /login
+Disallow: /signup
+
+# API 라우트는 크롤링 제외
+Disallow: /api/
+
+Sitemap: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/sitemap.xml

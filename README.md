@@ -1,24 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI 할 일 관리 서비스
 
-## Getting Started
+AI가 도와주는 똑똑한 할 일 관리 서비스입니다. Next.js 15, React 19, TypeScript로 구축되었으며, AI 기반 자연어 처리와 스마트 분석 기능을 제공합니다.
 
-First, run the development server:
+## 주요 기능
+
+- 🤖 **AI 자연어 처리**: 자연어로 할 일을 입력하면 AI가 자동으로 분석하여 구조화
+- 📊 **스마트 분석**: AI가 생산성 패턴을 분석하고 개선 방안 제시
+- 🎯 **우선순위 관리**: 중요도에 따른 할 일 분류 및 관리
+- 📱 **반응형 디자인**: 모바일, 태블릿, 데스크톱 모든 환경 지원
+- 🔐 **안전한 인증**: Supabase 기반 사용자 인증 및 데이터 보안
+
+## 기술 스택
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **UI**: shadcn/ui, Tailwind CSS 4, Radix UI
+- **Backend**: Supabase (PostgreSQL, Auth, Real-time)
+- **AI**: Google AI SDK (Gemini)
+- **Form**: React Hook Form, Zod
+- **State**: React Context, Custom Hooks
+
+## 환경 설정
+
+프로젝트를 실행하기 전에 다음 환경 변수를 설정해야 합니다:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# .env.local 파일 생성
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_api_key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 시작하기
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. 의존성 설치:
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. 개발 서버 실행:
+```bash
+npm run dev
+```
+
+3. 브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
+
+## 빌드 및 배포
+
+```bash
+# 프로덕션 빌드
+npm run build
+
+# 프로덕션 서버 실행
+npm run start
+
+# 코드 품질 검사
+npm run lint
+```
 
 ## Learn More
 

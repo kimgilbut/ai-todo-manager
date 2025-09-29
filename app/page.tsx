@@ -1,103 +1,247 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import * as React from "react"
+
+import { useAuth } from "@/contexts/auth-context"
+import { ProtectedRoute } from "@/components/auth/protected-route"
+import { Header } from "@/components/layout/header"
+import { TodoList } from "@/components/todo/todo-list"
+import { TodoForm } from "@/components/todo/todo-form"
+import { AISummary } from "@/components/ai/ai-summary"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+import { useTodos } from "@/hooks/use-todos"
+import { type Todo, type TodoFormData } from "@/components/todo/types"
+
+/**
+ * 메인 홈페이지 컴포넌트
+ * PRD 3.2 메인 화면 - 할 일 관리, 검색/필터/정렬, AI 요약 기능 구현
+ */
+function HomePageContent() {
+  // 인증 컨텍스트에서 사용자 정보 가져오기
+  const { profile, signOut } = useAuth()
+  
+  // profile이 없으면 currentUser도 undefined
+  const currentUser = profile ? {
+    id: profile.id,
+    name: profile.name,
+    email: profile.email,
+    avatar_url: profile.avatar_url
+  } : undefined
+  
+  // 할 일 관리 훅
+  const {
+    todos,
+    isLoading,
+    filter,
+    createTodo,
+    updateTodo,
+    toggleTodoStatus,
+    deleteTodo,
+    updateSearch,
+    updateStatusFilter,
+    updatePriorityFilter,
+    updateSort
+  } = useTodos()
+  
+  // 편집 모달 상태
+  const [isFormOpen, setIsFormOpen] = React.useState(false)
+  const [editingTodo, setEditingTodo] = React.useState<Todo | undefined>()
+  
+  // 삭제 확인 다이얼로그 상태
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
+  const [todoToDelete, setTodoToDelete] = React.useState<string | null>(null)
+  
+  // 폼 제출 로딩 상태
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+
+  // 할 일 데이터는 useTodos 훅에서 자동으로 관리됨
+
+  /**
+   * 할 일 추가 처리
+   */
+  const handleAddTodo = async (data: TodoFormData) => {
+    setIsSubmitting(true)
+    
+    try {
+      const success = await createTodo(data)
+      if (success) {
+        setIsFormOpen(false)
+        setEditingTodo(undefined)
+      }
+    } catch (error) {
+      console.error("할 일 추가 오류:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  /**
+   * 할 일 수정 처리
+   */
+  const handleEditTodo = async (data: TodoFormData) => {
+    if (!editingTodo) return
+
+    setIsSubmitting(true)
+    
+    try {
+      const success = await updateTodo(editingTodo.id, data)
+      if (success) {
+        setIsFormOpen(false)
+        setEditingTodo(undefined)
+      }
+    } catch (error) {
+      console.error("할 일 수정 오류:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  /**
+   * 할 일 상태 변경 처리
+   */
+  const handleStatusChange = async (todoId: string) => {
+    await toggleTodoStatus(todoId)
+  }
+
+  /**
+   * 할 일 삭제 확인 처리
+   */
+  const handleDeleteClick = (todoId: string) => {
+    setTodoToDelete(todoId)
+    setDeleteDialogOpen(true)
+  }
+
+  /**
+   * 할 일 삭제 확정 처리
+   */
+  const handleDeleteConfirm = async () => {
+    if (!todoToDelete) return
+    
+    const success = await deleteTodo(todoToDelete)
+    if (success) {
+      setDeleteDialogOpen(false)
+      setTodoToDelete(null)
+    }
+  }
+
+  /**
+   * 할 일 삭제 취소 처리
+   */
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false)
+    setTodoToDelete(null)
+  }
+
+  /**
+   * 할 일 편집 모달 열기
+   */
+  const handleEditClick = (todo: Todo) => {
+    setEditingTodo(todo)
+    setIsFormOpen(true)
+  }
+
+  /**
+   * 새 할 일 추가 모달 열기
+   */
+  const handleAddNewClick = () => {
+    setEditingTodo(undefined)
+    setIsFormOpen(true)
+  }
+
+  /**
+   * 모달 닫기
+   */
+  const handleCloseModal = () => {
+    setIsFormOpen(false)
+    setEditingTodo(undefined)
+  }
+
+
+
+  // 로그아웃은 signOut 함수로 처리됨
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-background">
+      {/* 헤더 */}
+      <Header user={currentUser} onLogout={signOut} />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      {/* 메인 컨텐츠 */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* 할 일 목록 (2/3 너비) */}
+          <div className="lg:col-span-2">
+            <TodoList
+              todos={todos}
+              isLoading={isLoading}
+              filter={filter}
+              onStatusChange={handleStatusChange}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+              onAddNew={handleAddNewClick}
+              onSearchChange={updateSearch}
+              onStatusFilterChange={updateStatusFilter}
+              onPriorityFilterChange={updatePriorityFilter}
+              onSortChange={updateSort}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+
+          {/* AI 요약 섹션 (1/3 너비) */}
+          <div className="lg:col-span-1">
+            <AISummary />
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+      {/* 할 일 추가/편집 모달 */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingTodo ? "할 일 수정" : "새 할 일 추가"}
+            </DialogTitle>
+          </DialogHeader>
+          <TodoForm
+            initialTodo={editingTodo}
+            onSubmit={editingTodo ? handleEditTodo : handleAddTodo}
+            onCancel={handleCloseModal}
+            isLoading={isSubmitting}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </DialogContent>
+      </Dialog>
+
+      {/* 삭제 확인 다이얼로그 */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>할 일 삭제</AlertDialogTitle>
+            <AlertDialogDescription>
+              정말로 이 할 일을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleDeleteCancel}>
+              취소
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive hover:bg-destructive/90">
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
-  );
+  )
+}
+
+/**
+ * 보호된 메인 페이지 컴포넌트
+ * 로그인한 사용자만 접근 가능
+ */
+export default function HomePage() {
+  return (
+    <ProtectedRoute>
+      <HomePageContent />
+    </ProtectedRoute>
+  )
 }
