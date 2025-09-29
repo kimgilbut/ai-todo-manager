@@ -2,37 +2,19 @@
   "css.validate": false,
   "scss.validate": false,
   "less.validate": false,
-  "css.customData": [
-    {
-      "atDirectives": [
-        {
-          "name": "@tailwind",
-          "description": "Tailwind CSS directive for injecting base, components, or utilities styles"
-        },
-        {
-          "name": "@apply",
-          "description": "Tailwind CSS directive for applying utility classes"
-        },
-        {
-          "name": "@layer",
-          "description": "Tailwind CSS directive for declaring component or utility layers"
-        },
-        {
-          "name": "@theme",
-          "description": "Tailwind CSS 4 directive for defining theme configuration"
-        },
-        {
-          "name": "@custom-variant",
-          "description": "Tailwind CSS 4 directive for creating custom variants"
-        }
-      ]
-    }
-  ],
-  "files.associations": {
-    "*.css": "tailwindcss"
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
   },
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ]
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }
