@@ -95,7 +95,7 @@ function SignupPageContent() {
           {/* 서비스 제목 및 설명 */}
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              AI 할 일 관리
+              AI 할 일 관리 서비스
             </h1>
             <p className="text-muted-foreground text-base leading-relaxed">
               AI 기반 지능형 할 일 관리로<br />
@@ -123,7 +123,7 @@ function SignupPageContent() {
               회원가입
             </CardTitle>
             <CardDescription className="text-center">
-              새 계정을 생성하여 AI 할 일 관리를 시작하세요
+              새 계정을 생성하여 AI 할 일 관리 서비스를 시작하세요
             </CardDescription>
           </CardHeader>
           
@@ -299,7 +299,7 @@ function SignupPageContent() {
           </div>
           
           <p className="text-xs text-muted-foreground">
-            © 2025 AI 할 일 관리. All rights reserved.
+            © 2025 AI 할 일 관리 서비스. All rights reserved.
           </p>
         </div>
       </div>

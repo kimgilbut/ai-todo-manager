@@ -73,7 +73,7 @@ export function Header({
               <Brain className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="flex flex-col">
-              <span className="font-semibold text-lg leading-none">AI 할 일 관리</span>
+              <span className="font-semibold text-lg leading-none">AI 할 일 관리 서비스</span>
               <span className="text-xs text-muted-foreground">지능형 생산성 도구</span>
             </div>
           </Link>
